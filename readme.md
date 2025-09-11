@@ -27,7 +27,7 @@ HTML5 - CSS+HTML+JavaScript
 static - 이미지
 templates - html
 
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
@@ -36,7 +36,7 @@ templates - html
 <body>
   <h1>안녕하세요!</h1>
   </body>
-</html> -->
+</html>
 
 package com.example.demo; - 현재 폴더 위치
 
@@ -129,9 +129,9 @@ JIT(Just-In-Time) 컴파일러를 사용하여 실행 성능을 향상시킴
 • 최상위 폴더 : pom.xml 설정 파일
 
 html에서 어떻게 사용되나?
-<!-- <html lang="en" xmlns:th="http://www.thymeleaf.org"> --> 선언
-* <!--/* This code will be removed at thymeleaf parsing time! */--> 주석
-<!-- <span th:text="${data}"> --> 텍스트 출력
+<html lang="en" xmlns:th="http://www.thymeleaf.org"> 선언
+* This code will be removed at thymeleaf parsing time! 주석
+<span th:text="${data}"> 텍스트 출력
 
 ## URL 맵핑 & 컨트롤러
 
@@ -152,7 +152,7 @@ Public class DemoController {
 } 
 
 * tmaplates / hello.html, index html 수정
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -162,9 +162,9 @@ Public class DemoController {
     <h1>안녕하세요!</h1>
     **<a href="/hello">홈페이지 메인</a>
 </body>
-</html> -->
+</html> 
 
-<!-- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
@@ -175,4 +175,4 @@ Public class DemoController {
     <p th:text="${data}"></p>
     <a href="/">홈페이지 메인</a>
 </body>
-</html> -->
+</html>
