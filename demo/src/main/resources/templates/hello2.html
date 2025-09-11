@@ -1,0 +1,32 @@
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+ <head>
+    <meta charset="UTF-8">
+    <title>홈페이지 메인</title>
+ </head>
+ 
+ <body>
+    <h1>안녕하세요!</h1>
+    <p th:text="${data}"></p>
+    <a href="hello2">홈페이지 메인</a>
+ </body>
+</html> -->
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>안녕하세요!</title>
+</head>
+<body>
+    <h1>안녕하세요!</h1>
+
+    <p>이름: <span th:text="${name}"></span></p>
+    <p>나이: <span th:text="${age}"></span></p>
+    <p>이메일: <span th:text="${email}"></span></p>
+    <p>도시: <span th:text="${city}"></span></p>
+    <p>직업: <span th:text="${job}"></span></p>
+
+    <a href="/">홈페이지 메인</a>
+</body>
+</html>
