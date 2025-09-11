@@ -1,4 +1,4 @@
-## 2주차 스프링부트 기초 수업 완료!
+## 2주차 스프링부트 기초 수업 총정리
 
 프론트엔드 프로그래밍 
 - 라이브러리(jQuery/D3/js/Bootstrap 등), 프레임워크(React/Angular/Vue 등)
@@ -106,26 +106,73 @@ JIT(Just-In-Time) 컴파일러를 사용하여 실행 성능을 향상시킴
 • C(CONTROLLER) : 페이지 흐름 제어
 
 ## Thymeleaf
-HTML 기반 템플릿 엔진 
+- HTML 기반 템플릿 엔진 
 • 템플릿 엔진은 다양한 엔진 존재 
 • 고전 JSP는 선호 X 
 • HTML, XML, JS, CSS 등 지원 
 
-• MVC에서 화면 출력 : 뷰(V) 역할 
-• DispatcherServlet을 통해 동작 • TemplateEngine 내장 
+- MVC에서 화면 출력 : 뷰(V) 역할 
+• DispatcherServlet을 통해 동작 
+• TemplateEngine 내장 
 
-• 주요 기능 
+- 주요 기능 
 • 데이터 바인딩, 연산, 객체 호출 등 
 • 템플릿 Fragment 
 • 전용 제어문(반복/조건 등)
 
-•모든 링크는 컨트롤러를 통해 동작
+- 모든 링크는 컨트롤러를 통해 동작
 •URL 요청 이후 컨트롤러는 viewName 리턴
-
-•내부 구조 및 설정 확인
 •메인화면 index.html의 위치 확인
+•리턴 받은 이름의 페이지 연결 (viewName.html)
 
-•리턴 받은 이름의 페이지 연결
-•viewName.html
-• 참고 : 기본 템플릿 엔진
+- 참고 : 기본 템플릿 엔진
 • 최상위 폴더 : pom.xml 설정 파일
+
+html에서 어떻게 사용되나?
+<!-- <html lang="en" xmlns:th="http://www.thymeleaf.org"> --> 선언
+* <!--/* This code will be removed at thymeleaf parsing time! */--> 주석
+<!-- <span th:text="${data}"> --> 텍스트 출력
+
+## URL 맵핑 & 컨트롤러
+
+* DemoController.java 파일에 아래 컨트롤러 추가
+package com.example.demo;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+@Controller // 컨트롤러 어노테이션 명시
+Public class DemoController {
+  @GetMapping(＂/hello＂) // 전송 방식 GET
+  public String hello(Model model) { 
+    model.addAttribute("data", " 방갑습니다."); // model 설정
+    return "hello"; // hello.html 연결
+  }
+} 
+
+* tmaplates / hello.html, index html 수정
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>index 메인페이지</title>
+</head>
+<body>
+    <h1>안녕하세요!</h1>
+    **<a href="/hello">홈페이지 메인</a>
+</body>
+</html> -->
+
+<!-- <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+    <title>Hello 페이지</title>
+</head>
+<body>
+    <h1>안녕하세요!</h1>
+    <p th:text="${data}"></p>
+    <a href="/">홈페이지 메인</a>
+</body>
+</html> -->
