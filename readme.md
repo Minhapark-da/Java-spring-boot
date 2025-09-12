@@ -1,3 +1,7 @@
+새로운 시작! 스프링 부트의 세계로 떠나보아요~
+
+## Getting Started
+ - [프로젝트 메인 주소] (https://github.com/Minhapark-da)
 ## 2주차 스프링부트 기초 수업 총정리
 
 프론트엔드 프로그래밍 
