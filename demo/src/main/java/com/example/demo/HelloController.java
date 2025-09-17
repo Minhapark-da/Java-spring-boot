@@ -36,6 +36,9 @@ public class HelloController {
         model.addAttribute("job", "학생");
         return "hello2"; // hello2.html
     }
-}
+    @GetMapping("/about_detailed")
+    public String about() {
+        return "about_detailed";}
+    }
 
 
