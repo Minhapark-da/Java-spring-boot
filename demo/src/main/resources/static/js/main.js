@@ -124,3 +124,29 @@
     
 })(jQuery);
 
+// ====== close confirm ======
+window.confirmClose = function () {
+  const ok = window.confirm('현재 창을 닫으시겠습니까?');
+  if (!ok) return;
+
+  // 1) 스크립트로 열린 창이면 정상 종료
+  if (window.opener && !window.opener.closed) {
+    window.close();
+    return;
+  }
+
+  // 2) 일반 탭에서는 대부분 보안 때문에 window.close()가 막힘 → 우회 시도
+  //    일부 브라우저에서 필요한 빈 오픈 후 닫기 트릭
+  window.open('', '_self');
+  window.close();
+
+  // 3) 그래도 안 닫히면 대체 동작: 뒤로 가기 → 실패 시 메인으로
+  if (history.length > 1) {
+    history.back();
+  } else {
+    // Thymeleaf 기준: 홈으로. (원한다면 'index.html'로 바꿔도 됨)
+    location.href = '/';
+  }
+};
+
+
