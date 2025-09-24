@@ -187,3 +187,14 @@ Public class DemoController {
 최상단 네비게이션 바 / 한글 일부 수정
 내 프로필 페이지 수정 및 이미지 수정
 버튼 클릭 경우 상세페이지 연결 구현
+
+## 4주차 스프링부트 기
+
+링크 대괄호 안으로 묶고 값이 들어가는것만 소괄호
+컨트롤러를 통해서 위 데이터 전달
+<!-- <input type="text" th:value="${data2}">
+<input type="checkbox" th:field="*{data2}" th:value="true"> 동의합니다.
+태그의 속성 값 여러 개 지정(링크는 @)
+<p><a th:href="@{/posts/(id=${link})}">글 상세보기</a> -->
+
+spring.datasource.url=jdbc:mysql://localhost:3306/spring?serverTimezone=Asia/Seoul
