@@ -1,18 +1,3 @@
-package com.example.demo.controller;
-// import org.springframework.stereotype.Controller;
-// import org.springframework.ui.Model;
-// import org.springframework.web.bind.annotation.GetMapping;
-
-// @Controller // 컨트롤러 어노테이션 명시
-// public class DemoController
-// {
-//      @GetMapping("/hello") // 전송 방식 GET
-//      public String hello(Model model) {
-//      model.addAttribute("data", " 반갑습니다."); // model 설정
-//      return "hello"; // hello.html 연결
-//     }
-// }
-
 import com.example.demo.model.service.Testservice; // 최상단 서비스 클래스 연동 추가
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +23,7 @@ public class DemoController {
         model.addAttribute("city", "서울");
         model.addAttribute("job", "학생");
         return "hello2"; // hello2.html
+    
     }
 
     @GetMapping("/about_detailed")
@@ -68,8 +54,11 @@ return "thymeleaf_test1";
  System.out.println("데이터 출력 디버그 : " + test);
  return "testdb";
  }
-
-// @GetMapping("/article_list")
-//  public String article_list() {
-//  return "article_list";
-//  }
+ 
+ @GetMapping("/article_list") // 게시판 링크 지정
+public String article_list(Model model) {
+ List<Article> list = blogService.findAll(); // 게시판 리스트
+model.addAttribute("articles", list); // 모델에 추가
+return "article_list"; // .HTML 연결
+}
+}
