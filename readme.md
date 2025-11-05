@@ -188,13 +188,189 @@ Public class DemoController {
 내 프로필 페이지 수정 및 이미지 수정
 버튼 클릭 경우 상세페이지 연결 구현
 
-## 4주차 스프링부트 기
+## 4주차 스프링부트 기초 수업 총정리
 
-링크 대괄호 안으로 묶고 값이 들어가는것만 소괄호
-컨트롤러를 통해서 위 데이터 전달
-<!-- <input type="text" th:value="${data2}">
-<input type="checkbox" th:field="*{data2}" th:value="true"> 동의합니다.
-태그의 속성 값 여러 개 지정(링크는 @)
-<p><a th:href="@{/posts/(id=${link})}">글 상세보기</a> -->
+대표 RDBMS: Oracle, MySQL, PostgreSQL, MariaDB, SQLite 
+오픈소스 DBMS와 클라우드 서비스, NoSQL 점차 성장
+프로젝트에 따라 속도, 일관성, 확장성, 비용 등을 고려해 데이터베이스를 선택
 
-spring.datasource.url=jdbc:mysql://localhost:3306/spring?serverTimezone=Asia/Seoul
+JPA(Java Persistence API)
+ORM(Object Relational Mapping) 기술로, 클래스와 테이블 매핑
+SQL 쿼리 없이 자바 메서드로 데이터 생성, 수정, 삭제, 조회가 가능
+영속성 컨텍스트를 통해 객체 상태를 자동으로 관리
+
+MVC 패키지 구조 정리
+Controller : 사용자 요청과 응답 처리
+Service : 중간 로직과 데이터 가공 담당
+Repository : 데이터베이스 접근과 CRUD 기능 수행
+Domain(Model) : 실제 데이터 구조를 담당하는 엔티티 클래스 포함
+View(Templates) : HTML과 Thymeleaf를 이용해 화면 구성
+
+테스트 페이지 구성
+Entity(TestDB.java) : @Entity, @Id 등 이용해 DB 테이블과 매핑
+Repository(TestRepository.java) : JpaRepository를 상속받아 CRUD 기능 자동 제공
+Service(TestService.java) : Repository를 주입받아 데이터 처리 로직 구현
+Controller(DemoController.java) : /testdb 요청을 받아 데이터를 View로 전달
+View(testdb.html) : th:text 등을 이용해 DB 데이터 출력
+
+실습 요약
+JPA와 MySQL을 연동 -> 데이터베이스 자동 생성 및 매핑
+MVC 구조 계층별로 분리하여 유지보수 쉬워짐
+VS Code의 MySQL 확장을 통해 DB 상태를 직접 확인
+SQL 명령어로 데이터를 추가하면 브라우저에서 바로 출력됨
+INSERT INTO testdb (name) VALUES ('홍길동');
+
+## 5주차 스프링부트 기초 수업 총정리
+
+Rest API 개념
+REST (Representational State Transfer): 웹 자원을 URI로 식별하고, 표준 HTTP 메서드로 상태를 주고받는 방식
+자원(Resource) : 데이터 또는 객체
+행위(Method) : CRUD(생성, 조회, 수정, 삭제)
+표현(Representation) : JSON 또는 XML 형식
+장점: 확장성, 유연성, 언어 독립성
+주의점: 세션 비사용, 캐싱 및 복잡한 트랜잭션 처리에 부적합
+
+HTTP 메서드와 CRUD 매핑
+POST → Create (데이터 생성)
+GET → Read (데이터 조회)
+PUT / PATCH → Update (데이터 수정)
+DELETE → Delete (데이터 삭제)
+
+URI 설계 원칙:
+명사형 사용 (동사 금지)
+소문자, 하이픈 사용 (언더바 금지)
+확장자 생략 (예: /article/1)
+
+블로그 게시판 만들기
+1. 게시판 화면 구성
+2. 게시글 조회 기능 구성
+게시글 작성 기능
+데이터 연동 및 확인
+
+페이지 리다이렉트 기능
+BlogController에 아래 코드 추가
+return "redirect:/article_list";
+@RestController 대신 @Controller로 변경하면 HTML 뷰 리턴 가능
+
+favicon.ico 자동 요청 오류 시
+BlogRestController에 아래 코드 추가
+
+@GetMapping("/favicon.ico")
+public void favicon() {}
+
+
+GitHub에 코드 업로드 시
+README에 프로젝트 링크 기재
+
+[index.html : 실행/수정 완료](https://github.com/Minhapark-da/Java-spring-boot)
+
+## 6주차 스프링부트 기초 수업 총정리
+
+ORM(Object-Relational Mapping) 개념
+객체와 관계형 데이터베이스 간의 매핑을 자동으로 처리하는 기술
+복잡한 SQL 쿼리를 직접 작성하지 않고도 데이터 조작 가능
+주요 구조: Spring Data JPA → Hibernate → JDBC → DB
+대표 ORM 구현체: Hibernate (JPA 인터페이스 구현)
+JDBC를 내부적으로 사용하며 객체 지향 쿼리 언어 지원
+
+ORM 매핑과 영속성(Persistence)
+객체와 DB는 ORM 매핑을 통해 연결
+영속화: 객체를 메모리에서 벗어나 DB에 저장해 생명주기를 관리
+프로그램 종료 후에도 데이터 유지됨
+EntityManager: 객체 생명주기 및 SQL 실행 관리
+
+주요 기능:
+캐싱(Cache)
+쓰기 지연(Write Delay)
+변경 감지(Change Detection)
+지연 로딩(Lazy Loading)
+
+블로그 게시판 수정 기능
+1. 수정 버튼 추가
+<a class="btn btn-warning" th:href="@{/article_edit/{id}(id=${article.id})}">수정</a>
+<a class="btn btn-danger" th:href="@{/article_delete/{id}(id=${article.id})}">삭제</a>
+2. 게시글 수정 페이지 연결
+Controller (BlogController.java)
+/article_edit/{id} 경로 매핑 추가
+
+@GetMapping("/article_edit/{id}")
+public String article_edit(Model model, @PathVariable Long id) {
+    Optional<Article> list = blogService.findById(id);
+    if (list.isPresent()) {
+        model.addAttribute("article", list.get());
+    } else {
+        return "/error_page/article_error";
+    }
+    return "article_edit";
+}
+3. 수정 화면 작성
+PUT 방식 지정 (_method hidden 필드 사용)
+4. Service 수정
+BlogService.java에 findById()와 update() 메서드 추가
+Optional로 null 방지
+Article 객체의 상태를 변경 후 저장
+
+public void update(Long id, AddArticleRequest request) {
+    Optional<Article> optionalArticle = blogRepository.findById(id);
+    optionalArticle.ifPresent(article -> {
+        article.update(request.getTitle(), request.getContent());
+        blogRepository.save(article);
+    });
+}
+5. Controller에 PUT 매핑 추가
+게시글 수정 완료 후 다시 목록으로 리다이렉트
+@PutMapping("/api/article_edit/{id}")
+public String updateArticle(@PathVariable Long id, @ModelAttribute AddArticleRequest request) {
+    blogService.update(id, request);
+    return "redirect:/article_list";
+}
+6. Entity 수정
+Article.java에 update() 메서드 추가
+
+public void update(String title, String content) {
+    this.title = title;
+    this.content = content;
+}
+
+7. HTML PUT/DELETE 지원 설정
+기본 HTML은 GET/POST만 지원하므로 아래 속성 추가 후 서버 재시작
+spring.mvc.hiddenmethod.filter.enabled=true
+
+블로그 게시판 삭제 기능
+Controller (BlogController.java)
+@DeleteMapping("/api/article_delete/{id}") 추가
+
+삭제 후 목록 페이지로 리다이렉트
+
+@DeleteMapping("/api/article_delete/{id}")
+public String deleteArticle(@PathVariable Long id) {
+    blogService.delete(id);
+    return "redirect:/article_list";
+}
+
+Service (BlogService.java)
+
+삭제 로직 추가
+
+public void delete(Long id) {
+    blogRepository.deleteById(id);
+}
+
+
+HTML 버튼 추가 (article_list.html)
+
+<form th:action="@{/api/article_delete/{id}(id=${article.id})}" method="post" style="display:inline;">
+    <input type="hidden" name="_method" value="delete">
+    <button type="submit" class="btn btn-danger">삭제</button>
+</form>
+
+예외 처리 추가
+잘못된 ID 또는 접근 시 에러 페이지 표시
+<h4 class="alert-heading">잘못된 게시판 접근입니다!</h4>
+<a href="javascript:history.back()" class="btn btn-primary">이전 페이지로</a>
+
+
+잘못된 매개변수(문자열 등) 처리 시
+@ControllerAdvice 를 사용해 공통 예외 페이지 연결 가능
+
+박민하 깃허브 링크 (https://github.com/Minhapark-da/Java-spring-boot)
