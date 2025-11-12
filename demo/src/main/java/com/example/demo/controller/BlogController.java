@@ -71,12 +71,19 @@ public class BlogController {
     //             return "error_page/article_error"; // 오류처리페이지로연결
     //         }
     //             return "article_edit"; // .HTML 연결
-    // }
-    @PutMapping("/api/article_edit/{id}")
-    public String updateArticle(@PathVariable Long id, @ModelAttribute AddArticleRequest request) {
-        blogService.update(id, request);
-        return "redirect:/article_list"; // 글 수정 이후 .html 연결
+
+    // 글쓰기 게시판
+@GetMapping("/board_write")
+public String board_write() {
+return "board_write";
 }
+
+    // }
+//     @PutMapping("/api/article_edit/{id}")
+//     public String updateArticle(@PathVariable Long id, @ModelAttribute AddArticleRequest request) {
+//         blogService.update(id, request);
+//         return "redirect:/article_list"; // 글 수정 이후 .html 연결
+// }
     @DeleteMapping("/api/article_delete/{id}")
         public String deleteArticle(@PathVariable Long id) {
         blogService.delete(id);
@@ -84,10 +91,10 @@ public class BlogController {
  }
 
 
-    @PostMapping("/articles")
-        public String addArticle(@ModelAttribute AddArticleRequest request) {
-            blogService.save(request);  // DB 저장
-    return "redirect:/article_list";  // 저장 후 목록으로 이동
+    @PostMapping("/api/boards") // 글쓰기 게시판 저장
+public String addboards(@ModelAttribute AddArticleRequest request) {
+blogService.save(request);
+return "redirect:/board_list"; // .HTML 연결
 }
     @ControllerAdvice
         public class GlobalExceptionHandler {
