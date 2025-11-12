@@ -1,5 +1,7 @@
 package com.example.demo.controller;
- import java.util.Optional;
+
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,116 +14,98 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import com.example.demo.model.domain.Board;
-// import com.example.demo.model.domain.Article;
 import com.example.demo.model.service.AddArticleRequest;
-import com.example.demo.model.service.BlogService; // 최상단 서비스 클래스 연동 추가
-// import lombok.RequiredArgsConstructor;
-import java.util.List;
-
+import com.example.demo.model.service.BlogService;
 
 @Controller
 public class BlogController {
-    
-   
+
     @Autowired
-    BlogService blogService; // DemoController 클래스 아래 객체 생성
+    private BlogService blogService;
 
-    // @GetMapping("/article_list") // 게시판 링크 지정
-    // public String article_list(Model model) {
-    //     List<Article> list = blogService.findAll(); // 게시판 리스트 전구모양 -> import
-    //     model.addAttribute("articles", list); // 모델에 추가
-    //     return "article_list"; // .HTML 연결
-    // }
-    
-     //보드 업로드 해야됨
-    // @GetMapping("/board_list") // 새로운 게시판 링크 지정
-    // public String board_list(Model model) {
-    // List<Board> list = blogService.findAll(); // 게시판 전체 리스트, 기존 Article에서 Board로 변경됨
-    // model.addAttribute("boards", list); // 모델에 추가
-    // return "board_list"; // .HTML 연결
-    // }
+    /**
+     * 게시글 목록 (검색 + 페이징)
+     * page: 0-base, size: 페이지당 글 수
+     */
+    @GetMapping("/board_list")
+    public String boardList(Model model,
+                            @RequestParam(defaultValue = "0") int page,
+                            @RequestParam(defaultValue = "3") int size,
+                            @RequestParam(defaultValue = "") String keyword) {
 
-    @GetMapping("/board_list") // 새로운 게시판 링크 지정
-        public String board_list(Model model, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "") String keyword) {
-        PageRequest pageable = PageRequest.of(page, 3); // 한 페이지의 게시글 수
-        Page<Board> list; // Page를 반환
-            if (keyword.isEmpty()) {
-                list = blogService.findAll(pageable); // 기본 전체 출력(키워드 x)
-                } else {
-            list = blogService.searchByKeyword(keyword, pageable); // 키워드로 검색
-                }
-            model.addAttribute("boards", list); // 모델에 추가
-            model.addAttribute("totalPages", list.getTotalPages()); // 페이지 크기
-            model.addAttribute("currentPage", page); // 페이지 번호
-            model.addAttribute("keyword", keyword); // 키워드
-            return "board_list"; // .HTML 연결
-            }
+        PageRequest pageable = PageRequest.of(page, size);
 
-    @GetMapping("/board_view/{id}") // 게시판 링크 지정
-    public String board_view(Model model, @PathVariable Long id) {
-    Optional<Board> list = blogService.findById(id); // 선택한 게시판 글
-    if (list.isPresent()) {
-    model.addAttribute("boards", list.get()); // 존재할 경우 실제 Board 객체를 모델에 추가
-    } else {
-    // 처리할 로직 추가 (예: 오류 페이지로 리다이렉트, 예외 처리 등)
-    return "/error_page/article_error"; // 오류 처리 페이지로 연결
+        Page<Board> list = keyword.isEmpty()
+                ? blogService.findAll(pageable)
+                : blogService.searchByKeyword(keyword, pageable);
+
+        // PPT 요구: 현재 페이지의 시작 글번호 (1 ~ n)
+        int startNum = (page * size) + 1;
+
+        model.addAttribute("boards", list);                 // Page<Board>
+        model.addAttribute("currentPage", page);            // 현재 페이지
+        model.addAttribute("totalPages", list.getTotalPages());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("pageSize", size);
+        model.addAttribute("startNum", startNum);           // 글번호 시작값
+        return "board_list";
     }
-    return "board_view"; // .HTML 연결
+
+    /**
+     * 게시글 상세
+     */
+    @GetMapping("/board_view/{id}")
+    public String boardView(Model model, @PathVariable Long id) {
+        Optional<Board> opt = blogService.findById(id);
+        if (opt.isEmpty()) {
+            return "/error_page/article_error";
+        }
+        model.addAttribute("boards", opt.get());   // (기존 뷰 이름과 맞춰 "boards"로 유지)
+        return "board_view";
     }
-    
-   
-    
-    
-    // @GetMapping("/article_edit/{id}") // 게시판링크지정
-    // public String article_edit(Model model, @PathVariable Long id) {
-    //     Optional<Article> list = blogService.findById(id); // 선택한게시판글
-            
-    //     if (list.isPresent()) {
-    //             model.addAttribute("article", list.get()); // 존재하면Article 객체를모델에추가
-    //             } else {
-    //         // 처리할로직추가(예: 오류페이지로리다이렉트, 예외처리등)
-    //             return "error_page/article_error"; // 오류처리페이지로연결
-    //         }
-    //             return "article_edit"; // .HTML 연결
 
-    // 글쓰기 게시판
-@GetMapping("/board_write")
-public String board_write() {
-return "board_write";
-}
+    /**
+     * 글쓰기 화면
+     */
+    @GetMapping("/board_write")
+    public String boardWrite() {
+        return "board_write";
+    }
 
-    // }
-//     @PutMapping("/api/article_edit/{id}")
-//     public String updateArticle(@PathVariable Long id, @ModelAttribute AddArticleRequest request) {
-//         blogService.update(id, request);
-//         return "redirect:/article_list"; // 글 수정 이후 .html 연결
-// }
-    @DeleteMapping("/api/article_delete/{id}")
-        public String deleteArticle(@PathVariable Long id) {
+    /**
+     * 글 저장
+     */
+    @PostMapping("/api/boards")
+    public String addBoards(@ModelAttribute AddArticleRequest request) {
+        blogService.save(request);
+        return "redirect:/board_list";
+    }
+
+    /**
+     * 글 삭제
+     * - 경로/리다이렉트를 boards 컨벤션에 맞게 정리
+     */
+    @DeleteMapping("/api/board_delete/{id}")
+    public String deleteBoard(@PathVariable Long id) {
         blogService.delete(id);
-        return "redirect:/article_list";
- }
-
-
-    @PostMapping("/api/boards") // 글쓰기 게시판 저장
-public String addboards(@ModelAttribute AddArticleRequest request) {
-blogService.save(request);
-return "redirect:/board_list"; // .HTML 연결
-}
-    @ControllerAdvice
-        public class GlobalExceptionHandler {
-
-    @ExceptionHandler(MethodArgumentTypeMismatchException.class)   //어떤 에러 종류를 잡을지 지정
-        public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, Model model) {
-        
-            model.addAttribute("message", "잘못된 게시글 접근입니다.");
-            return "error_page/article_error"; // <- 에러 페이지로 연결
+        return "redirect:/board_list";
     }
-}
-        
+
+    /**
+     * 공통 예외 처리
+     * - 내부 클래스로 두되 static으로 선언(권장)
+     */
+    @ControllerAdvice
+    public static class GlobalExceptionHandler {
+
+        @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+        public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, Model model) {
+            model.addAttribute("message", "잘못된 게시글 접근입니다.");
+            return "error_page/article_error";
+        }
+    }
 }
