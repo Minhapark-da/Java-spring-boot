@@ -374,3 +374,202 @@ HTML 버튼 추가 (article_list.html)
 @ControllerAdvice 를 사용해 공통 예외 페이지 연결 가능
 
 박민하 깃허브 링크 (https://github.com/Minhapark-da/Java-spring-boot)
+
+
+-----기말-----
+
+1. 7주차 스프링부트 정리
+게시판 구조 확장 (Board 게시판)
+
+핵심 개념
+기존 Article 게시판을 확장하여 Board 전용 게시판 분리
+Entity / Repository / Service / Controller 계층 분리
+테이블 기반 게시판 구조로 개선
+게시글 상세보기, 수정, 삭제 기능 구현
+
+핵심 코드
+Board Entity
+
+@Entity
+public class Board {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String title;
+    private String content;
+    private String user;
+    private String newdate;
+    private String count;
+    private String likec;
+}
+
+BoardRepository
+
+public interface BoardRepository extends JpaRepository<Board, Long> {
+}
+
+게시판 목록 컨트롤러
+
+@GetMapping("/board_list")
+public String boardList(Model model) {
+    List<Board> list = blogService.findAll();
+    model.addAttribute("articles", list);
+    return "board_list";
+}
+
+게시글 상세보기
+@GetMapping("/board_view/{id}")
+public String boardView(Model model, @PathVariable Long id) {
+    Board board = blogService.findById(id);
+    model.addAttribute("board", board);
+    return "board_view";
+}
+
+2. 9주차 스프링부트 정리
+게시판 검색 & 페이징
+
+핵심 개념
+데이터 증가에 따른 성능 문제 대응
+전체 조회 방식의 한계 → 검색 + 페이징 도입
+Pageable / Page 객체 활용
+검색 결과에도 페이징 유지
+
+핵심 코드
+Repository (검색 + 페이징)
+
+public interface BoardRepository extends JpaRepository<Board, Long> {
+    Page<Board> findByTitleContaining(String keyword, Pageable pageable);
+}
+
+Service
+
+public Page<Board> searchBoards(String keyword, Pageable pageable) {
+    return boardRepository.findByTitleContaining(keyword, pageable);
+}
+
+Controller
+
+@GetMapping("/board_list")
+public String boardList(
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(required = false) String keyword,
+        Model model) {
+
+    Pageable pageable = PageRequest.of(page, 5);
+
+    Page<Board> boards = (keyword == null)
+        ? boardRepository.findAll(pageable)
+        : boardRepository.findByTitleContaining(keyword, pageable);
+
+    model.addAttribute("boards", boards);
+    model.addAttribute("keyword", keyword);
+    return "board_list";
+}
+
+3. 10주차 스프링부트 정리
+로그인 · 로그아웃 (기본)
+
+핵심 개념
+스프링 시큐리티 기반 인증 구조 이해
+세션 기반 로그인
+비밀번호 암호화(BCrypt)
+로그인 / 로그아웃 기본 흐름 구현
+
+핵심 코드
+SecurityConfig
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .formLogin()
+            .and()
+            .logout();
+        return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+
+4. 11주차 스프링부트 정리
+로그인 · 로그아웃 (심화)
+
+핵심 개념
+자체 로그인 로직 구현
+이메일 기반 회원 인증
+Validation을 이용한 입력값 검증
+로그인 실패 처리
+
+핵심 코드
+Member Entity
+
+@Entity
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String email;
+
+    private String password;
+}
+
+로그인 Service
+
+public Member login(String email, String password) {
+    Member member = memberRepository.findByEmail(email)
+        .orElseThrow(() -> new IllegalArgumentException("회원 없음"));
+
+    if (!passwordEncoder.matches(password, member.getPassword())) {
+        throw new IllegalArgumentException("비밀번호 불일치");
+    }
+    return member;
+}
+
+Validation DTO
+public class LoginRequest {
+
+    @Email
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String password;
+}
+
+5. 12주차 스프링부트 정리
+포트폴리오 완성
+
+핵심 개념
+
+지금까지 구현한 기능 전체 통합
+게시판 + 검색 + 페이징 + 인증 기능 결합
+MVC 구조 최종 점검
+실서비스 구조에 가까운 웹 애플리케이션 완성
+
+핵심 코드 흐름 요약
+Client
+ ↓
+Controller (요청 처리)
+ ↓
+Service (비즈니스 로직)
+ ↓
+Repository (DB 접근)
+ ↓
+Entity (데이터)
+
+CRUD → 검색 → 페이징 → 인증으로 단계적 확장
+데이터 규모 증가에 따른 구조 변화 이해
+스프링 부트 MVC 패턴 실전 적용
+포트폴리오로 활용 가능한 프로젝트 완성
